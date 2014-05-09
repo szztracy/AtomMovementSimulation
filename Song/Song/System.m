@@ -21,6 +21,9 @@
 //coordinate change
 - (void)coordinateChangeOfAnAtom:(Atom *)thisAtom;
 
+//half velocity change
+- (void)halfVelocityChangeOfAnAtom:(Atom *)thisAtom;
+
 //velocity change
 - (void)velocityChangeOfAnAtom:(Atom *)thisAtom;
 
@@ -38,9 +41,9 @@
 NSInteger timeSlice = 1; //of each time stamp ?measurement
 double bigSigma = 1.0; //kJ/mol
 double littleSigma = 0.3; //nm
-double edgeLength = 2.0; //nm
+double edgeLength = 4.0; //nm
 double cutoffDistance = 1.5; //nm
-double atomMass; //amu = 1.66053892E-27 kg
+double atomMass = 10.0; //amu = 1.66053892E-27 kg
 
 
 #pragma mark - Initialization Methods
@@ -48,9 +51,10 @@ double atomMass; //amu = 1.66053892E-27 kg
 {
     self = [super init];
     
-    _atomsArray = [[NSMutableArray alloc] initWithCapacity:[atomCoordinateInputArray count]];
-    
     if (self) {
+
+        _atomsArray = [[NSMutableArray alloc] initWithCapacity:[atomCoordinateInputArray count]];
+        
         for (int i = 0; i < [atomCoordinateInputArray count]; i++) {
             
             double x = [[[atomCoordinateInputArray objectAtIndex:i] objectAtIndex:xValue] doubleValue];
@@ -58,9 +62,15 @@ double atomMass; //amu = 1.66053892E-27 kg
             double z = [[[atomCoordinateInputArray objectAtIndex:i] objectAtIndex:zValue] doubleValue];
             
             
-            [_atomsArray addObject:[[Atom alloc] initAtom:i WithCoordinateX:x Y:y Z:z]];
+            [_atomsArray insertObject:[[Atom alloc] initAtom:i WithCoordinateX:x Y:y Z:z] atIndex:i];
             
         };
+        
+        for (int i = 0; i < [atomCoordinateInputArray count]; i++) {
+            
+            [self forceChangeOfAnAtom:[_atomsArray objectAtIndex:i]];
+            
+        }
     }
     
     return self;
@@ -76,9 +86,10 @@ double atomMass; //amu = 1.66053892E-27 kg
 }
 
 
-#pragma mark - Critical Changing Sequence
+#pragma mark - Critical Changing Sequence v1
 //1. coordinate change
-- (void)coordinateChangeOfAnAtom:(Atom *)thisAtom
+/*
+ - (void)coordinateChangeOfAnAtom:(Atom *)thisAtom
 {
     //cache coordinate data to prevent replacing by coordinate change method
     _lastCoordinateCache = [[NSMutableArray alloc] initWithObjects:[NSNumber numberWithDouble:thisAtom.coordinateX], [NSNumber numberWithDouble:thisAtom.coordinateY], [NSNumber numberWithDouble:thisAtom.coordinateZ],nil];
@@ -86,9 +97,17 @@ double atomMass; //amu = 1.66053892E-27 kg
     thisAtom.coordinateX = 2 * thisAtom.coordinateX - thisAtom.lastCoordinateX + thisAtom.accelerationX * timeSlice * timeSlice;
     thisAtom.coordinateY = 2 * thisAtom.coordinateY - thisAtom.lastCoordinateY + thisAtom.accelerationY * timeSlice * timeSlice;
     thisAtom.coordinateZ = 2 * thisAtom.coordinateZ - thisAtom.lastCoordinateZ + thisAtom.accelerationZ * timeSlice * timeSlice;
+    
+    //NSLog(@"Coordinate change of Atom [%ld] completed!", (long)thisAtom.atomId);
+    
+    thisAtom.lastCoordinateX = [[_lastCoordinateCache objectAtIndex:xValue] doubleValue];
+    thisAtom.lastCoordinateY = [[_lastCoordinateCache objectAtIndex:yValue] doubleValue];
+    thisAtom.lastCoordinateZ = [[_lastCoordinateCache objectAtIndex:zValue] doubleValue];
 }
+ */
 
 //2. force change
+/*
 - (void)forceChangeOfAnAtom:(Atom *)thisAtom
 {
     for (int i = 0; i < [self.atomsArray count]; i++) {
@@ -100,14 +119,18 @@ double atomMass; //amu = 1.66053892E-27 kg
             double forceChangeY = [[forceChange objectAtIndex:yValue] doubleValue];
             double forceChangeZ = [[forceChange objectAtIndex:zValue] doubleValue];
             
+            NSLog(@"force changed on x: %f", forceChangeX);
+            
             [thisAtom changeForceX:forceChangeX Y:forceChangeY Z:forceChangeZ];
         }
     }
     
-    NSLog(@"Force change of atom %ld completed!", (long)thisAtom.atomId);
+    //NSLog(@"Force change of atom %ld completed!", (long)thisAtom.atomId);
 }
+ */
 
 //3. accelaration change
+/*
 - (void)accelerationChangeOfAnAtom:(Atom *)thisAtom
 {
     double accelerationX = thisAtom.forceX /atomMass;
@@ -117,9 +140,13 @@ double atomMass; //amu = 1.66053892E-27 kg
     [thisAtom setAccelerationX:accelerationX];
     [thisAtom setAccelerationY:accelerationY];
     [thisAtom setAccelerationZ:accelerationZ];
+    
+    //NSLog(@"Acceleration change of Atom [%ld] completed!", (long)thisAtom.atomId);
 }
+*/
 
 //4. velocity change
+/*
 - (void)velocityChangeOfAnAtom:(Atom *)thisAtom
 {
     double velocityX = (thisAtom.coordinateX - thisAtom.lastCoordinateX) / (2 * timeSlice);
@@ -130,20 +157,92 @@ double atomMass; //amu = 1.66053892E-27 kg
     [thisAtom setVelocityY:velocityY];
     [thisAtom setVelocityZ:velocityZ];
     
-    NSLog(@"Velocity change of Atom [%ld] completed!", (long)thisAtom.atomId);
+    //NSLog(@"Velocity change of Atom [%ld] completed!", (long)thisAtom.atomId);
+
+    
 }
+ */
+
+
+#pragma mark - Critical Changing Sequence v2
+//1. Velocity Change
+- (void)halfVelocityChangeOfAnAtom:(Atom *)thisAtom
+{
+    thisAtom.halfVelocityX = thisAtom.velocityX + thisAtom.accelerationX * timeSlice / 2.0;
+    thisAtom.halfVelocityY = thisAtom.velocityY + thisAtom.accelerationY * timeSlice / 2.0;
+    thisAtom.halfVelocityZ = thisAtom.velocityZ + thisAtom.accelerationZ * timeSlice / 2.0;
+}
+
+//2. Coordinate Change
+- (void)coordinateChangeOfAnAtom:(Atom *)thisAtom
+{
+    thisAtom.coordinateX = thisAtom.coordinateX + thisAtom.halfVelocityX * timeSlice;
+    thisAtom.coordinateY = thisAtom.coordinateY + thisAtom.halfVelocityY * timeSlice;
+    thisAtom.coordinateZ = thisAtom.coordinateZ + thisAtom.halfVelocityZ * timeSlice;
+}
+
+
+//3. Force Change
+- (void)forceChangeOfAnAtom:(Atom *)thisAtom
+{
+    thisAtom.forceX = 0.0;
+    thisAtom.forceY = 0.0;
+    thisAtom.forceZ = 0.0;
+    
+    for (int i = 0; i < [self.atomsArray count]; i++) {
+        if (i != thisAtom.atomId) {
+            
+            NSArray *forceChange = [self forceBetweenAnAtom:thisAtom andTheOtherAtom:[self.atomsArray objectAtIndex:i]];
+            
+            double forceChangeX = [[forceChange objectAtIndex:xValue] doubleValue];
+            double forceChangeY = [[forceChange objectAtIndex:yValue] doubleValue];
+            double forceChangeZ = [[forceChange objectAtIndex:zValue] doubleValue];
+            
+            
+            [thisAtom changeForceX:forceChangeX Y:forceChangeY Z:forceChangeZ];
+            
+        }
+    }
+    
+    //NSLog(@"Force change of atom %ld completed!", (long)thisAtom.atomId);
+}
+
+//4. Acceleration Change
+- (void)accelerationChangeOfAnAtom:(Atom *)thisAtom
+{
+    double accelerationX = thisAtom.forceX /atomMass;
+    double accelerationY = thisAtom.forceY /atomMass;
+    double accelerationZ = thisAtom.forceZ /atomMass;
+    
+    [thisAtom setAccelerationX:accelerationX];
+    [thisAtom setAccelerationY:accelerationY];
+    [thisAtom setAccelerationZ:accelerationZ];
+    
+    //NSLog(@"Acceleration change of Atom [%ld] completed!", (long)thisAtom.atomId);
+}
+
+//5. Velocity Change
+- (void)velocityChangeOfAnAtom:(Atom *)thisAtom
+{
+    thisAtom.velocityX = thisAtom.halfVelocityX + thisAtom.accelerationX * timeSlice / 2.0;
+    thisAtom.velocityY = thisAtom.halfVelocityY + thisAtom.accelerationY * timeSlice / 2.0;
+    thisAtom.velocityZ = thisAtom.halfVelocityZ + thisAtom.accelerationZ * timeSlice / 2.0;
+}
+
+
 
 #pragma mark - proceed method
 
 - (void)proceedWithNumberOfSteps:(NSUInteger)numberOfSteps
 {
-    for (int steps = 0; steps < numberOfSteps; steps++) {
+    for (int steps = 0; steps < _numberOfAtoms; steps++) {
         
         //iterate through every atom
         for (int i = 0; i < [self.atomsArray count]; i++) {
+            [self halfVelocityChangeOfAnAtom:[self.atomsArray objectAtIndex:i]];
             [self coordinateChangeOfAnAtom:[self.atomsArray objectAtIndex:i]];
-            [self forceChangeOfAnAtom:[self.atomsArray objectAtIndex:i]];
             [self accelerationChangeOfAnAtom:[self.atomsArray objectAtIndex:i]];
+            [self forceChangeOfAnAtom:[self.atomsArray objectAtIndex:i]];
             [self velocityChangeOfAnAtom:[self.atomsArray objectAtIndex:i]];
         };
     };
@@ -157,6 +256,8 @@ double atomMass; //amu = 1.66053892E-27 kg
 {
     
     double r = [self distanceBetweenAnAtom:thisAtom andTheOtherAtom:otherAtom];
+    
+    
     
     NSArray *forceArray;
     
@@ -177,11 +278,40 @@ double atomMass; //amu = 1.66053892E-27 kg
 //distance between two atoms
 - (double)distanceBetweenAnAtom:(Atom *)anAtom andTheOtherAtom:(Atom *)otherAtom
 {
-    double dx = (fabs(otherAtom.coordinateX - anAtom.coordinateX) > (edgeLength / 2)) ? ((otherAtom.coordinateX - anAtom.coordinateX) - edgeLength) : (otherAtom.coordinateX - anAtom.coordinateX);
-    double dy = (fabs(otherAtom.coordinateY - anAtom.coordinateY) > (edgeLength / 2)) ? ((otherAtom.coordinateY - anAtom.coordinateY) - edgeLength) : (otherAtom.coordinateY - anAtom.coordinateY);
-    double dz = (fabs(otherAtom.coordinateZ - anAtom.coordinateZ) > (edgeLength / 2)) ? ((otherAtom.coordinateZ - anAtom.coordinateZ) - edgeLength) : (otherAtom.coordinateZ - anAtom.coordinateZ);
+    double dx;
+    double dy;
+    double dz;
     
-    return sqrt(pow(dx, 2.0) + pow(dy, 2.0) + pow(dz, 2.0));;
+    if (fabs(otherAtom.coordinateX - anAtom.coordinateX) > (edgeLength / 2.0)) {
+        dx = edgeLength - fabs(otherAtom.coordinateX - anAtom.coordinateX);
+    } else {
+        dx = fabs(otherAtom.coordinateX - anAtom.coordinateX);
+    }
+    
+    
+    if (fabs(otherAtom.coordinateY - anAtom.coordinateY) > (edgeLength / 2.0)) {
+        dy = edgeLength - fabs(otherAtom.coordinateY - anAtom.coordinateY);
+    } else {
+        dy = fabs(otherAtom.coordinateY - anAtom.coordinateY);
+    }
+    
+    if (fabs(otherAtom.coordinateZ - anAtom.coordinateZ) > (edgeLength / 2.0)) {
+        dz = edgeLength - fabs(otherAtom.coordinateZ - anAtom.coordinateZ);
+    } else {
+        dz = fabs(otherAtom.coordinateZ - anAtom.coordinateZ);
+    }
+
+    
+    
+    //double dx = (fabs(otherAtom.coordinateX - anAtom.coordinateX) > (edgeLength / 2)) ? (fabs(otherAtom.coordinateX - anAtom.coordinateX) - edgeLength) : fabs(otherAtom.coordinateX - anAtom.coordinateX);
+    //double dy = (fabs(otherAtom.coordinateY - anAtom.coordinateY) > (edgeLength / 2)) ? (fabs(otherAtom.coordinateY - anAtom.coordinateY) - edgeLength) : fabs(otherAtom.coordinateY - anAtom.coordinateY);
+    //double dz = (fabs(otherAtom.coordinateZ - anAtom.coordinateZ) > (edgeLength / 2)) ? (fabs(otherAtom.coordinateZ - anAtom.coordinateZ) - edgeLength) : fabs(otherAtom.coordinateZ - anAtom.coordinateZ);
+    
+    double r = sqrt(pow(dx, 2.0) + pow(dy, 2.0) + pow(dz, 2.0));
+    
+    NSLog(@"Distance between Atom %ld and Atom %ld is %f. \n", anAtom.atomId, otherAtom.atomId, r);
+    
+    return r;
 }
 
 

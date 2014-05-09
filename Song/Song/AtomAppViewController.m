@@ -17,15 +17,18 @@
 @implementation AtomAppViewController
 
 #pragma mark - test input
-double Atom0X = -19.934;
-double Atom0Y = -16.679;
-double Atom0Z = -13.492;
-double Atom1X = -4.623;
-double Atom1Y = 10.388;
-double Atom1Z = -16.936;
-double Atom2X = -7.584;
-double Atom2Y = 11.509;
-double Atom2Z = 4.949;
+double Atom0X = -1.9934;
+double Atom0Y = -1.6679;
+double Atom0Z = -1.3492;
+double Atom1X = -0.4623;
+double Atom1Y = 1.0388;
+double Atom1Z = -1.6936;
+double Atom2X = -0.7584;
+double Atom2Y = 1.1509;
+double Atom2Z = 0.4949;
+double Atom3X = -1.6593;
+double Atom3Y = -1.2829;
+double Atom3Z = -1.1384;
 
 #pragma mark - init methods
 - (System *)atomSystem
@@ -55,6 +58,8 @@ double Atom2Z = 4.949;
 
 - (IBAction)runBtnPushed:(NSButton *)sender {
     [_atomSystem proceedWithNumberOfSteps:[_numberOfStepsField integerValue]];
+    //update steps executed
+    [[self stepsExecutedField] setIntegerValue:[self.stepsExecutedField integerValue] + [_numberOfStepsField integerValue]];
     [self updateUI];
 }
 
@@ -64,16 +69,21 @@ double Atom2Z = 4.949;
     NSArray *inputValuesOfAtom0 = [[NSArray alloc] initWithObjects:[NSNumber numberWithDouble:Atom0X], [NSNumber numberWithDouble:Atom0Y], [NSNumber numberWithDouble:Atom0Z], nil];
     NSArray *inputValuesOfAtom1 = [[NSArray alloc] initWithObjects:[NSNumber numberWithDouble:Atom1X], [NSNumber numberWithDouble:Atom1Y], [NSNumber numberWithDouble:Atom1Z], nil];
     NSArray *inputValuesOfAtom2 = [[NSArray alloc] initWithObjects:[NSNumber numberWithDouble:Atom2X], [NSNumber numberWithDouble:Atom2Y], [NSNumber numberWithDouble:Atom2Z], nil];
-    _atomCoordinateInputArray = [[NSArray alloc] initWithObjects:inputValuesOfAtom0, inputValuesOfAtom1, inputValuesOfAtom2, nil];
+    NSArray *inputValuesOfAtom3 = [[NSArray alloc] initWithObjects:[NSNumber numberWithDouble:Atom3X], [NSNumber numberWithDouble:Atom3Y], [NSNumber numberWithDouble:Atom3Z], nil];
+    _atomCoordinateInputArray = [[NSArray alloc] initWithObjects:inputValuesOfAtom0, inputValuesOfAtom1, inputValuesOfAtom2, inputValuesOfAtom3, nil];
     
     if ([self atomSystem]) {
-        NSLog(@"Initialization sequence succeeded with %ld atoms !\n", [_atomSystem.atomsArray count]);
+        NSLog(@"Initialization sequence succeeded with %ld atoms !\n\n", [_atomSystem.atomsArray count]);
         
     } else {
         NSLog(@"Initialization sequence failed! \n");
     }
     
     [self initAtomNumberBtn];
+    [self updateUI];
+    
+    //disable this init button
+    [[self initializeBtn] setEnabled:NO];
     
 }
 
@@ -106,7 +116,9 @@ double Atom2Z = 4.949;
     
     //update atom info
     NSInteger indexOfAtom = [_atomNumberBtn indexOfSelectedItem];
-    NSLog(@"Atom %ld selected! \n", indexOfAtom);
+    
+    //NSLog(@"Atom %ld selected! \n", indexOfAtom);
+    
     //display coordinate info
     [_coordinateXField setDoubleValue:[[[_atomSystem atomsArray] objectAtIndex:indexOfAtom] coordinateX]];
     [_coordinateYField setDoubleValue:[[[_atomSystem atomsArray] objectAtIndex:indexOfAtom] coordinateY]];

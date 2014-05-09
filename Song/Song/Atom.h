@@ -23,6 +23,10 @@
 @property double velocityX;
 @property double velocityY;
 @property double velocityZ;
+//half velocity
+@property double halfVelocityX;
+@property double halfVelocityY;
+@property double halfVelocityZ;
 //Force
 @property double forceX;
 @property double forceY;
@@ -50,6 +54,7 @@
 -(double)setAtomPotentialEnergy;
 @property (nonatomic) double atomKineticEnergy;
 @property (nonatomic) double atomTotalEnergy;
+
 //initilization
 -(instancetype)initAtom:(NSInteger)atomId WithCoordinateX:(double)coordinateX Y:(double)coordinateY Z:(double)coordinateZ;
 

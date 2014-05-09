@@ -84,9 +84,9 @@ double atomMass; //amu = 1.66053892E-27 kg
 //add forceChange values to the current values
 -(NSArray *)changeForceX:(float)forceChangeX Y:(float)forceChangeY Z:(float)forceChangeZ
 {
-    self.forceX += forceChangeX;
-    self.forceY += forceChangeY;
-    self.forceZ += forceChangeZ;//? += operant
+    self.forceX = self.forceX + forceChangeX;
+    self.forceY = self.forceY + forceChangeY;
+    self.forceZ = self.forceZ + forceChangeZ;
     
     return [self force];
 }

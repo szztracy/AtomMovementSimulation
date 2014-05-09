@@ -15,6 +15,8 @@
 @property (weak) IBOutlet NSTextField *totalEnergyField;
 @property (weak) IBOutlet NSTextField *totalTempratureField;
 
+@property (weak) IBOutlet NSTextField *stepsExecutedField;
+
 @property (weak) IBOutlet NSPopUpButton *atomNumberBtn;
 - (IBAction)atomNumberBtnPushed:(NSPopUpButton *)sender;
 
