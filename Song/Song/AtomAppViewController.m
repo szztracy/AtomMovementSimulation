@@ -11,24 +11,12 @@
 
 @interface AtomAppViewController ()
 @property (strong, nonatomic) System *atomSystem;
-@property (strong, nonatomic) NSArray *atomCoordinateInputArray;
+@property (strong, nonatomic) NSMutableArray *atomCoordinateInputArray;
 @end
 
 @implementation AtomAppViewController
 
-#pragma mark - test input
-double Atom0X = -1.9934;
-double Atom0Y = -1.6679;
-double Atom0Z = -1.3492;
-double Atom1X = -0.4623;
-double Atom1Y = 1.0388;
-double Atom1Z = -1.6936;
-double Atom2X = -0.7584;
-double Atom2Y = 1.1509;
-double Atom2Z = 0.4949;
-double Atom3X = -1.6593;
-double Atom3Y = -1.2829;
-double Atom3Z = -1.1384;
+
 
 #pragma mark - init methods
 - (System *)atomSystem
@@ -65,12 +53,7 @@ double Atom3Z = -1.1384;
 
 - (IBAction)initializeBtnPushed:(NSButton *)sender {
     
-    //temprorily input coordinate here
-    NSArray *inputValuesOfAtom0 = [[NSArray alloc] initWithObjects:[NSNumber numberWithDouble:Atom0X], [NSNumber numberWithDouble:Atom0Y], [NSNumber numberWithDouble:Atom0Z], nil];
-    NSArray *inputValuesOfAtom1 = [[NSArray alloc] initWithObjects:[NSNumber numberWithDouble:Atom1X], [NSNumber numberWithDouble:Atom1Y], [NSNumber numberWithDouble:Atom1Z], nil];
-    NSArray *inputValuesOfAtom2 = [[NSArray alloc] initWithObjects:[NSNumber numberWithDouble:Atom2X], [NSNumber numberWithDouble:Atom2Y], [NSNumber numberWithDouble:Atom2Z], nil];
-    NSArray *inputValuesOfAtom3 = [[NSArray alloc] initWithObjects:[NSNumber numberWithDouble:Atom3X], [NSNumber numberWithDouble:Atom3Y], [NSNumber numberWithDouble:Atom3Z], nil];
-    _atomCoordinateInputArray = [[NSArray alloc] initWithObjects:inputValuesOfAtom0, inputValuesOfAtom1, inputValuesOfAtom2, inputValuesOfAtom3, nil];
+    [self readFile];
     
     if ([self atomSystem]) {
         NSLog(@"Initialization sequence succeeded with %ld atoms !\n\n", [_atomSystem.atomsArray count]);
@@ -84,7 +67,27 @@ double Atom3Z = -1.1384;
     
     //disable this init button
     [[self initializeBtn] setEnabled:NO];
+    [[self runBtn] setEnabled:YES];
+    [[self resetBtn] setEnabled:YES];
+    [[self numberOfStepsField] setEnabled:YES];
+    [[self numberOfStepsField] setIntegerValue:0];
+    [[self stepsExecutedField] setIntegerValue:0];
     
+}
+
+- (IBAction)resetBtnPushed:(NSButton *)sender {
+    
+    _atomSystem = nil;
+    
+    [[self initializeBtn] setEnabled:YES];
+    [[self runBtn] setEnabled:NO];
+    [[self stepsExecutedField] setIntegerValue:0];
+    [[self numberOfStepsField] setStringValue:@""];
+    [[self numberOfStepsField] setEnabled:NO];
+    [[self resetBtn] setEnabled:NO];
+    [[self atomNumberBtn] removeAllItems];
+    [self updateUI];
+
 }
 
 
@@ -132,8 +135,45 @@ double Atom3Z = -1.1384;
     [_forceYField setDoubleValue:[[[_atomSystem atomsArray] objectAtIndex:indexOfAtom] forceY]];
     [_forceZField setDoubleValue:[[[_atomSystem atomsArray] objectAtIndex:indexOfAtom] forceZ]];
     //display energy info
-    [_atomPotentialEnergyField setDoubleValue:[[[_atomSystem atomsArray] objectAtIndex:indexOfAtom] atomPotentialEnergy]];
     [_atomKineticEnergyField setDoubleValue:[[[_atomSystem atomsArray] objectAtIndex:indexOfAtom] atomKineticEnergy]];
+}
+
+- (void)readFile
+{
+    NSString *inputString = [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"lj" ofType:nil] encoding:NSASCIIStringEncoding error:nil];
+    
+    NSArray *inputArray = [inputString componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+
+    _atomCoordinateInputArray = [[NSMutableArray alloc] initWithCapacity:[inputArray count] / 3];
+    
+    for (int i = 0; i < [inputArray count] - 2; i = i + 3) {
+        
+        double x = [[inputArray objectAtIndex:i] doubleValue] * 0.1;
+        double y = [[inputArray objectAtIndex:i + 1] doubleValue] * 0.1;
+        double z = [[inputArray objectAtIndex:i + 2] doubleValue] * 0.1;
+        
+        NSArray *anAtomCoordinate = [[NSArray alloc] initWithObjects:[NSNumber numberWithDouble:x],[NSNumber numberWithDouble:y], [NSNumber numberWithDouble:z], nil];
+        
+        [_atomCoordinateInputArray addObject:anAtomCoordinate];
+        
+    }
     
 }
+
+- (NSButton *)resetBtn
+{
+    if (_resetBtn) {
+        NSColor *color = [NSColor redColor];
+        
+        NSMutableAttributedString *colorTitle = [[NSMutableAttributedString alloc] initWithAttributedString:[_resetBtn attributedTitle]];
+        NSRange titleRange = NSMakeRange(0, [colorTitle length]);
+        
+        [colorTitle addAttribute:NSForegroundColorAttributeName value:color range:titleRange];
+        
+        [_resetBtn setAttributedTitle:colorTitle];
+    }
+    
+    return _resetBtn;
+}
+
 @end

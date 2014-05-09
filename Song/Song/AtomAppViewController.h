@@ -32,7 +32,7 @@
 @property (weak) IBOutlet NSTextField *forceYField;
 @property (weak) IBOutlet NSTextField *forceZField;
 
-@property (weak) IBOutlet NSTextField *atomPotentialEnergyField;
+
 @property (weak) IBOutlet NSTextField *atomKineticEnergyField;
 
 @property (weak) IBOutlet NSTextField *numberOfStepsField;
@@ -43,5 +43,7 @@
 
 - (IBAction)initializeBtnPushed:(NSButton *)sender;
 @property (weak) IBOutlet NSButton *initializeBtn;
+@property (weak, nonatomic) IBOutlet NSButton *resetBtn;
+- (IBAction)resetBtnPushed:(NSButton *)sender;
 
 @end

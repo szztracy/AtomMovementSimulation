@@ -38,7 +38,7 @@
 @implementation System
 
 #pragma mark - Constants
-NSInteger timeSlice = 1; //of each time stamp ?measurement
+double timeSlice = 2.0; //of each time stamp ?measurement
 double bigSigma = 1.0; //kJ/mol
 double littleSigma = 0.3; //nm
 double edgeLength = 4.0; //nm
@@ -235,7 +235,7 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
 
 - (void)proceedWithNumberOfSteps:(NSUInteger)numberOfSteps
 {
-    for (int steps = 0; steps < _numberOfAtoms; steps++) {
+    for (int steps = 0; steps < numberOfSteps; steps++) {
         
         //iterate through every atom
         for (int i = 0; i < [self.atomsArray count]; i++) {
@@ -309,11 +309,60 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
     
     double r = sqrt(pow(dx, 2.0) + pow(dy, 2.0) + pow(dz, 2.0));
     
-    NSLog(@"Distance between Atom %ld and Atom %ld is %f. \n", anAtom.atomId, otherAtom.atomId, r);
+    //NSLog(@"Distance between Atom %ld and Atom %ld is %f. \n", anAtom.atomId, otherAtom.atomId, r);
     
     return r;
 }
 
+- (double)potentialEnergyBetweenAnAtom:(Atom *)anAtom andTheOtherAtom:(Atom *)otherAtom
+{
+    double r = [self distanceBetweenAnAtom:anAtom andTheOtherAtom:otherAtom];
+    return 4.0 * bigSigma * (pow(littleSigma / r, 12) - pow(littleSigma / r, 6));
+}
+
+- (double)potentialEnergyOfAtomAtIndex:(NSInteger)indexOfAtom
+{
+    double potentialEnergyOfAtom = 0.0;
+    
+    for (NSInteger i = indexOfAtom + 1; i < [_atomsArray count]; i++) {
+        potentialEnergyOfAtom = potentialEnergyOfAtom + [self potentialEnergyBetweenAnAtom:[_atomsArray objectAtIndex:indexOfAtom] andTheOtherAtom:[_atomsArray objectAtIndex:i]];
+    }
+    
+    return potentialEnergyOfAtom;
+}
+
+#pragma mark - getter
+- (double)systemKineticEnergy
+{
+    
+    _systemKineticEnergy = 0.0;
+    
+    for (int i = 0; i < [_atomsArray count]; i++) {
+        _systemKineticEnergy = _systemKineticEnergy + [[_atomsArray objectAtIndex:i] atomKineticEnergy];
+    }
+    
+    return _systemKineticEnergy;
+}
+
+- (double)systemPotentialEnergy
+{
+    _systemPotentialEnergy = 0.0;
+    
+    for (int i = 0; i < [_atomsArray count]; i++) {
+        _systemPotentialEnergy =  _systemPotentialEnergy+ [self potentialEnergyOfAtomAtIndex:i];
+    }
+    
+    return _systemPotentialEnergy;
+}
+
+- (double)systemTotalEnergy
+{
+    _systemTotalEnergy = 0.0;
+    
+    _systemTotalEnergy = _systemPotentialEnergy + _systemKineticEnergy;
+    
+    return _systemTotalEnergy;
+}
 
 
 @end

@@ -12,7 +12,7 @@
 @implementation Atom
 
 #pragma mark - Constants
-double atomMass; //amu = 1.66053892E-27 kg
+double anAtomMass = 10.0; //amu = 1.66053892E-27 kg
 
 #pragma mark - init method
 
@@ -110,17 +110,9 @@ double atomMass; //amu = 1.66053892E-27 kg
 -(double)atomKineticEnergy
 {
     if (!_atomKineticEnergy) {
-        _atomKineticEnergy = 0.5 * atomMass * (pow(self.velocityX, 2) + pow(self.velocityY, 2) + pow(self.velocityZ, 2));
+        _atomKineticEnergy = 0.5 * anAtomMass * (pow(self.velocityX, 2) + pow(self.velocityY, 2) + pow(self.velocityZ, 2));
     }
     return _atomKineticEnergy;
-}
-
--(double)atomTotalEnergy
-{
-    if (!_atomTotalEnergy) {
-        _atomTotalEnergy = _atomKineticEnergy + _atomPotentialEnergy;
-    }
-    return _atomTotalEnergy;
 }
 
 @end
