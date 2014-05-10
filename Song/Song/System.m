@@ -38,7 +38,7 @@
 @implementation System
 
 #pragma mark - Constants
-double timeSlice = 2.0; //of each time stamp ?measurement
+double timeSlice = 0.002; //of each time stamp ?measurement
 double bigSigma = 1.0; //kJ/mol
 double littleSigma = 0.3; //nm
 double edgeLength = 4.0; //nm
