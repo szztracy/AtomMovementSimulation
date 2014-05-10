@@ -171,6 +171,7 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
     thisAtom.halfVelocityX = thisAtom.velocityX + thisAtom.accelerationX * timeSlice / 2.0;
     thisAtom.halfVelocityY = thisAtom.velocityY + thisAtom.accelerationY * timeSlice / 2.0;
     thisAtom.halfVelocityZ = thisAtom.velocityZ + thisAtom.accelerationZ * timeSlice / 2.0;
+    
 }
 
 //2. Coordinate Change
@@ -241,10 +242,12 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
         for (int i = 0; i < [self.atomsArray count]; i++) {
             [self halfVelocityChangeOfAnAtom:[self.atomsArray objectAtIndex:i]];
             [self coordinateChangeOfAnAtom:[self.atomsArray objectAtIndex:i]];
-            [self accelerationChangeOfAnAtom:[self.atomsArray objectAtIndex:i]];
-            [self forceChangeOfAnAtom:[self.atomsArray objectAtIndex:i]];
-            [self velocityChangeOfAnAtom:[self.atomsArray objectAtIndex:i]];
         };
+        for (int i = 0; i < [self.atomsArray count]; i++) {
+            [self forceChangeOfAnAtom:[self.atomsArray objectAtIndex:i]];
+            [self accelerationChangeOfAnAtom:[self.atomsArray objectAtIndex:i]];
+            [self velocityChangeOfAnAtom:[self.atomsArray objectAtIndex:i]];
+        }
     };
     
     NSLog(@"Executed %ld steps! \n", numberOfSteps);
@@ -267,7 +270,6 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
         double x = (24 * bigSigma / pow(r, 2)) * (2 * pow(littleSigma / r, 12) - pow(littleSigma / r, 6)) * (otherAtom.coordinateX - thisAtom.coordinateX);
         double y = (24 * bigSigma / pow(r, 2)) * (2 * pow(littleSigma / r, 12) - pow(littleSigma / r, 6)) * (otherAtom.coordinateY - thisAtom.coordinateY);
         double z = (24 * bigSigma / pow(r, 2)) * (2 * pow(littleSigma / r, 12) - pow(littleSigma / r, 6)) * (otherAtom.coordinateZ - thisAtom.coordinateZ);
-        
         forceArray = [[NSArray alloc] initWithObjects:[NSNumber numberWithDouble:x], [NSNumber numberWithDouble:y], [NSNumber numberWithDouble:z], nil];
     }
     
@@ -284,6 +286,7 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
     
     if (fabs(otherAtom.coordinateX - anAtom.coordinateX) > (edgeLength / 2.0)) {
         dx = edgeLength - fabs(otherAtom.coordinateX - anAtom.coordinateX);
+        //NSLog(@"Distance x between Atom [%ld] and Atom [%ld] is altered!", anAtom.atomId, otherAtom.atomId);
     } else {
         dx = fabs(otherAtom.coordinateX - anAtom.coordinateX);
     }
@@ -291,12 +294,16 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
     
     if (fabs(otherAtom.coordinateY - anAtom.coordinateY) > (edgeLength / 2.0)) {
         dy = edgeLength - fabs(otherAtom.coordinateY - anAtom.coordinateY);
+        //NSLog(@"Distance y between Atom [%ld] and Atom [%ld] is altered!", anAtom.atomId, otherAtom.atomId);
+
     } else {
         dy = fabs(otherAtom.coordinateY - anAtom.coordinateY);
     }
     
     if (fabs(otherAtom.coordinateZ - anAtom.coordinateZ) > (edgeLength / 2.0)) {
         dz = edgeLength - fabs(otherAtom.coordinateZ - anAtom.coordinateZ);
+        //NSLog(@"Distance z between Atom [%ld] and Atom [%ld] is altered!", anAtom.atomId, otherAtom.atomId);
+
     } else {
         dz = fabs(otherAtom.coordinateZ - anAtom.coordinateZ);
     }
@@ -357,11 +364,21 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
 
 - (double)systemTotalEnergy
 {
-    _systemTotalEnergy = 0.0;
     
     _systemTotalEnergy = _systemPotentialEnergy + _systemKineticEnergy;
     
     return _systemTotalEnergy;
+}
+
+- (double)systemTemprature
+{
+    _systemTemprature = 0.0;
+    
+    for (int i = 0; i < [_atomsArray count]; i++) {
+        _systemTemprature = _systemTemprature + [[_atomsArray objectAtIndex:i] atomTemprature];
+    }
+    
+    return _systemTemprature;
 }
 
 

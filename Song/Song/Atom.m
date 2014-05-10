@@ -13,6 +13,8 @@
 
 #pragma mark - Constants
 double anAtomMass = 10.0; //amu = 1.66053892E-27 kg
+double N = 6.02214129e23; //mol^-1
+double kB = 1.3806488e-23; //J/K
 
 #pragma mark - init method
 
@@ -109,10 +111,31 @@ double anAtomMass = 10.0; //amu = 1.66053892E-27 kg
 
 -(double)atomKineticEnergy
 {
-    if (!_atomKineticEnergy) {
-        _atomKineticEnergy = 0.5 * anAtomMass * (pow(self.velocityX, 2) + pow(self.velocityY, 2) + pow(self.velocityZ, 2));
-    }
+    _atomKineticEnergy = 0.5 * anAtomMass * (pow(self.velocityX, 2) + pow(self.velocityY, 2) + pow(self.velocityZ, 2));
+    
     return _atomKineticEnergy;
+}
+
+-(double)atomTemprature
+{
+    _atomTemprature = anAtomMass * sqrt (pow(_velocityX, 2) + pow(_velocityY, 2) + pow(_velocityZ, 2)) / ((3.0 * N - 3) *kB);
+    
+    return _atomTemprature;
+}
+
+-(double)accelerationX
+{
+    return _forceX / anAtomMass;
+}
+
+-(double)accelerationY
+{
+    return _forceY / anAtomMass;
+}
+
+-(double)accelerationZ
+{
+    return _forceZ / anAtomMass;
 }
 
 @end

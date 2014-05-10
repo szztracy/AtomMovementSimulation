@@ -73,9 +73,11 @@
     [[self numberOfStepsField] setIntegerValue:0];
     [[self stepsExecutedField] setIntegerValue:0];
     
+    
 }
 
 - (IBAction)resetBtnPushed:(NSButton *)sender {
+    
     
     _atomSystem = nil;
     
@@ -88,6 +90,7 @@
     [[self atomNumberBtn] removeAllItems];
     [self updateUI];
 
+    NSLog(@"\nReseting sequence completed!\n\n");
 }
 
 
@@ -136,6 +139,7 @@
     [_forceZField setDoubleValue:[[[_atomSystem atomsArray] objectAtIndex:indexOfAtom] forceZ]];
     //display energy info
     [_atomKineticEnergyField setDoubleValue:[[[_atomSystem atomsArray] objectAtIndex:indexOfAtom] atomKineticEnergy]];
+    [_atomTempratureField setDoubleValue:[[[_atomSystem atomsArray] objectAtIndex:indexOfAtom] atomTemprature]];
 }
 
 - (void)readFile

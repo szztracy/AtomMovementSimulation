@@ -32,9 +32,9 @@
 @property double forceZ;
 
 //acceleration
-@property double accelerationX;
-@property double accelerationY;
-@property double accelerationZ;
+@property (nonatomic) double accelerationX;
+@property (nonatomic) double accelerationY;
+@property (nonatomic) double accelerationZ;
 
 //getter and setter methods of properties
 -(NSArray *)coordinate;
@@ -49,7 +49,7 @@
 
 //energy
 
-
+@property (nonatomic) double atomTemprature;
 @property (nonatomic) double atomKineticEnergy;
 
 

@@ -22,6 +22,7 @@
 		94520565191A04200030F630 /* Atom.m in Sources */ = {isa = PBXBuildFile; fileRef = 94520564191A04200030F630 /* Atom.m */; };
 		946F0B6D191A84C800C81395 /* System.m in Sources */ = {isa = PBXBuildFile; fileRef = 946F0B6C191A84C800C81395 /* System.m */; };
 		94E54551191CB352008CF0C8 /* lj in Resources */ = {isa = PBXBuildFile; fileRef = 94E54550191CB352008CF0C8 /* lj */; };
+		94E54553191DA26D008CF0C8 /* temp in Resources */ = {isa = PBXBuildFile; fileRef = 94E54552191DA26D008CF0C8 /* temp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,7 @@
 		946F0B6B191A84C800C81395 /* System.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = System.h; sourceTree = "<group>"; };
 		946F0B6C191A84C800C81395 /* System.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = System.m; sourceTree = "<group>"; };
 		94E54550191CB352008CF0C8 /* lj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lj; sourceTree = "<group>"; };
+		94E54552191DA26D008CF0C8 /* temp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = temp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -171,6 +173,7 @@
 		94520566191A042A0030F630 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				94E54552191DA26D008CF0C8 /* temp */,
 				94E54550191CB352008CF0C8 /* lj */,
 				946F0B6B191A84C800C81395 /* System.h */,
 				946F0B6C191A84C800C81395 /* System.m */,
@@ -257,6 +260,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				94E54553191DA26D008CF0C8 /* temp in Resources */,
 				94E54551191CB352008CF0C8 /* lj in Resources */,
 				945205371919FCEC0030F630 /* InfoPlist.strings in Resources */,
 				945205451919FCEC0030F630 /* Images.xcassets in Resources */,

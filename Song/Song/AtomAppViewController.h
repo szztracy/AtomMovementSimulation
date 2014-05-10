@@ -34,6 +34,7 @@
 
 
 @property (weak) IBOutlet NSTextField *atomKineticEnergyField;
+@property (weak) IBOutlet NSTextField *atomTempratureField;
 
 @property (weak) IBOutlet NSTextField *numberOfStepsField;
 
