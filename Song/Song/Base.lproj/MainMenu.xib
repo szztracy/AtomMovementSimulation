@@ -771,7 +771,7 @@
                         </textFieldCell>
                     </textField>
                     <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="e50-Pb-YSO">
-                        <rect key="frame" x="196" y="446" width="87" height="26"/>
+                        <rect key="frame" x="196" y="446" width="143" height="26"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <popUpButtonCell key="cell" type="push" title="Atom #" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="wf4-65-kcc" id="GKP-gq-aA2">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>

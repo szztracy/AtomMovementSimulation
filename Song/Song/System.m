@@ -13,6 +13,7 @@
 #define xValue 0
 #define yValue 1
 #define zValue 2
+#define rValue 3
 
 @interface System()
 
@@ -38,9 +39,9 @@
 @implementation System
 
 #pragma mark - Constants
-double timeSlice = 0.002; //of each time stamp ?measurement
+double timeSlice = 0.002; //of each time stamp
 double bigSigma = 1.0; //kJ/mol
-double littleSigma = 0.3; //nm
+double littleSigma = 0.03; //nm
 double edgeLength = 4.0; //nm
 double cutoffDistance = 1.5; //nm
 double atomMass = 10.0; //amu = 1.66053892E-27 kg
@@ -190,7 +191,7 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
     thisAtom.forceY = 0.0;
     thisAtom.forceZ = 0.0;
     
-    for (int i = 0; i < [self.atomsArray count]; i++) {
+    for (int i = 0; i < [_atomsArray count]; i++) {
         if (i != thisAtom.atomId) {
             
             NSArray *forceChange = [self forceBetweenAnAtom:thisAtom andTheOtherAtom:[self.atomsArray objectAtIndex:i]];
@@ -199,8 +200,16 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
             double forceChangeY = [[forceChange objectAtIndex:yValue] doubleValue];
             double forceChangeZ = [[forceChange objectAtIndex:zValue] doubleValue];
             
+            /*
+            if (forceChangeX > 100 || forceChangeY > 100 || forceChangeZ > 100) {
+                NSLog(@"forceChange = %f, %f, %f", forceChangeX, forceChangeY, forceChangeZ);
+            }
+             */
             
-            [thisAtom changeForceX:forceChangeX Y:forceChangeY Z:forceChangeZ];
+            
+            thisAtom.forceX = thisAtom.forceX + forceChangeX;
+            thisAtom.forceY = thisAtom.forceY + forceChangeY;
+            thisAtom.forceZ = thisAtom.forceZ + forceChangeZ;
             
         }
     }
@@ -258,8 +267,13 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
 - (NSArray *)forceBetweenAnAtom:(Atom *)thisAtom andTheOtherAtom:(Atom *)otherAtom
 {
     
-    double r = [self distanceBetweenAnAtom:thisAtom andTheOtherAtom:otherAtom];
+    double r = [[[self distanceBetweenAnAtom:thisAtom andTheOtherAtom:otherAtom] objectAtIndex:rValue] doubleValue];
     
+    double dx = [[[self distanceBetweenAnAtom:thisAtom andTheOtherAtom:otherAtom] objectAtIndex:xValue] doubleValue];
+    
+    double dy = [[[self distanceBetweenAnAtom:thisAtom andTheOtherAtom:otherAtom] objectAtIndex:yValue] doubleValue];
+    
+    double dz = [[[self distanceBetweenAnAtom:thisAtom andTheOtherAtom:otherAtom] objectAtIndex:zValue] doubleValue];
     
     
     NSArray *forceArray;
@@ -267,9 +281,16 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
     if (r > cutoffDistance) { //put aside this atom if the distance is more than the cutoff
         forceArray = [[NSArray alloc] initWithObjects:[NSNumber numberWithDouble:0.0], [NSNumber numberWithDouble:0.0], [NSNumber numberWithDouble:0.0], nil];
     } else {
-        double x = (24 * bigSigma / pow(r, 2)) * (2 * pow(littleSigma / r, 12) - pow(littleSigma / r, 6)) * (otherAtom.coordinateX - thisAtom.coordinateX);
-        double y = (24 * bigSigma / pow(r, 2)) * (2 * pow(littleSigma / r, 12) - pow(littleSigma / r, 6)) * (otherAtom.coordinateY - thisAtom.coordinateY);
-        double z = (24 * bigSigma / pow(r, 2)) * (2 * pow(littleSigma / r, 12) - pow(littleSigma / r, 6)) * (otherAtom.coordinateZ - thisAtom.coordinateZ);
+        double x = (24.0 * bigSigma / pow(r, 2)) * (2.0 * pow(littleSigma / r, 12) - pow(littleSigma / r, 6)) * dx;
+        double y = (24.0 * bigSigma / pow(r, 2)) * (2.0 * pow(littleSigma / r, 12) - pow(littleSigma / r, 6)) * dy;
+        double z = (24.0 * bigSigma / pow(r, 2)) * (2.0 * pow(littleSigma / r, 12) - pow(littleSigma / r, 6)) * dz;
+        
+        if (x > 100 || y > 100 || z > 100) {
+            NSLog(@"force between atom[%ld] and atom[%ld] is (%f, %f, %f)", thisAtom.atomId, otherAtom.atomId, x, y, z);
+            NSLog(@"distance between atom[%ld] and atom[%ld] is %f.", thisAtom.atomId, otherAtom.atomId, r);
+
+        }
+        
         forceArray = [[NSArray alloc] initWithObjects:[NSNumber numberWithDouble:x], [NSNumber numberWithDouble:y], [NSNumber numberWithDouble:z], nil];
     }
     
@@ -278,34 +299,47 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
 }
 
 //distance between two atoms
-- (double)distanceBetweenAnAtom:(Atom *)anAtom andTheOtherAtom:(Atom *)otherAtom
+- (NSArray *)distanceBetweenAnAtom:(Atom *)anAtom andTheOtherAtom:(Atom *)otherAtom
 {
     double dx;
     double dy;
     double dz;
     
     if (fabs(otherAtom.coordinateX - anAtom.coordinateX) > (edgeLength / 2.0)) {
-        dx = edgeLength - fabs(otherAtom.coordinateX - anAtom.coordinateX);
+        if (otherAtom.coordinateX - anAtom.coordinateX > 0) {
+            dx = otherAtom.coordinateX - anAtom.coordinateX - edgeLength;
+        } else {
+            dx = otherAtom.coordinateX - anAtom.coordinateX + edgeLength;
+        }
+        
         //NSLog(@"Distance x between Atom [%ld] and Atom [%ld] is altered!", anAtom.atomId, otherAtom.atomId);
     } else {
-        dx = fabs(otherAtom.coordinateX - anAtom.coordinateX);
+        dx = otherAtom.coordinateX - anAtom.coordinateX;
     }
     
     
     if (fabs(otherAtom.coordinateY - anAtom.coordinateY) > (edgeLength / 2.0)) {
-        dy = edgeLength - fabs(otherAtom.coordinateY - anAtom.coordinateY);
-        //NSLog(@"Distance y between Atom [%ld] and Atom [%ld] is altered!", anAtom.atomId, otherAtom.atomId);
-
+        if (otherAtom.coordinateY - anAtom.coordinateY > 0) {
+            dy = otherAtom.coordinateY - anAtom.coordinateY - edgeLength;
+        } else {
+            dy = otherAtom.coordinateY - anAtom.coordinateY + edgeLength;
+        }
+        
+        //NSLog(@"Distance x between Atom [%ld] and Atom [%ld] is altered!", anAtom.atomId, otherAtom.atomId);
     } else {
-        dy = fabs(otherAtom.coordinateY - anAtom.coordinateY);
+        dy = otherAtom.coordinateY - anAtom.coordinateY;
     }
     
     if (fabs(otherAtom.coordinateZ - anAtom.coordinateZ) > (edgeLength / 2.0)) {
-        dz = edgeLength - fabs(otherAtom.coordinateZ - anAtom.coordinateZ);
-        //NSLog(@"Distance z between Atom [%ld] and Atom [%ld] is altered!", anAtom.atomId, otherAtom.atomId);
-
+        if (otherAtom.coordinateZ - anAtom.coordinateZ > 0) {
+            dz = otherAtom.coordinateZ - anAtom.coordinateZ - edgeLength;
+        } else {
+            dz = otherAtom.coordinateZ - anAtom.coordinateZ + edgeLength;
+        }
+        
+        //NSLog(@"Distance x between Atom [%ld] and Atom [%ld] is altered!", anAtom.atomId, otherAtom.atomId);
     } else {
-        dz = fabs(otherAtom.coordinateZ - anAtom.coordinateZ);
+        dz = otherAtom.coordinateZ - anAtom.coordinateZ;
     }
 
     
@@ -316,14 +350,19 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
     
     double r = sqrt(pow(dx, 2.0) + pow(dy, 2.0) + pow(dz, 2.0));
     
-    //NSLog(@"Distance between Atom %ld and Atom %ld is %f. \n", anAtom.atomId, otherAtom.atomId, r);
+    if (r > 3.5) {
+        NSLog(@"Distance between Atom %ld and Atom %ld is %f. \n", anAtom.atomId, otherAtom.atomId, r);
+    }
     
-    return r;
+    
+    NSArray *distanceArray = [[NSArray alloc] initWithObjects:[NSNumber numberWithDouble:dx], [NSNumber numberWithDouble:dy], [NSNumber numberWithDouble:dz], [NSNumber numberWithDouble:r], nil];
+    
+    return distanceArray;
 }
 
 - (double)potentialEnergyBetweenAnAtom:(Atom *)anAtom andTheOtherAtom:(Atom *)otherAtom
 {
-    double r = [self distanceBetweenAnAtom:anAtom andTheOtherAtom:otherAtom];
+    double r = [[[self distanceBetweenAnAtom:anAtom andTheOtherAtom:otherAtom] objectAtIndex:rValue] doubleValue];
     return 4.0 * bigSigma * (pow(littleSigma / r, 12) - pow(littleSigma / r, 6));
 }
 

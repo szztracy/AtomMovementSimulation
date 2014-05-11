@@ -12,9 +12,9 @@
 
 @property (nonatomic) NSInteger atomId; //from 0 to 511
 //coordinate
-@property double coordinateX;
-@property double coordinateY;
-@property double coordinateZ;
+@property (nonatomic) double coordinateX;
+@property (nonatomic) double coordinateY;
+@property (nonatomic) double coordinateZ;
 
 //velocity
 @property double velocityX;

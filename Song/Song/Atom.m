@@ -15,6 +15,7 @@
 double anAtomMass = 10.0; //amu = 1.66053892E-27 kg
 double N = 6.02214129e23; //mol^-1
 double kB = 1.3806488e-23; //J/K
+double boxEdgeLength = 4.0; //nm
 
 #pragma mark - init method
 
@@ -86,6 +87,7 @@ double kB = 1.3806488e-23; //J/K
 //add forceChange values to the current values
 -(NSArray *)changeForceX:(float)forceChangeX Y:(float)forceChangeY Z:(float)forceChangeZ
 {
+
     self.forceX = self.forceX + forceChangeX;
     self.forceY = self.forceY + forceChangeY;
     self.forceZ = self.forceZ + forceChangeZ;
@@ -137,5 +139,37 @@ double kB = 1.3806488e-23; //J/K
 {
     return _forceZ / anAtomMass;
 }
+
+//setter of coordinate values
+
+-(void)setCoordinateX:(double)coordinateX
+{
+    if (coordinateX > boxEdgeLength) {
+        _coordinateX = coordinateX - boxEdgeLength;
+    } else {
+        _coordinateX = coordinateX;
+    }
+    
+}
+
+-(void)setCoordinateY:(double)coordinateY
+{
+    if (coordinateY > boxEdgeLength) {
+        _coordinateY = coordinateY - boxEdgeLength;
+    } else {
+        _coordinateY = coordinateY;
+    }
+}
+
+-(void)setCoordinateZ:(double)coordinateZ
+{
+    if (coordinateZ > boxEdgeLength) {
+        _coordinateZ = coordinateZ - boxEdgeLength;
+    } else {
+        _coordinateZ = coordinateZ;
+    }
+}
+
+
 
 @end

@@ -150,11 +150,11 @@
 
     _atomCoordinateInputArray = [[NSMutableArray alloc] initWithCapacity:[inputArray count] / 3];
     
-    for (int i = 0; i < [inputArray count] - 2; i = i + 3) {
+    for (int i = 0; i < [inputArray count] / 3; i++) {
         
         double x = [[inputArray objectAtIndex:i] doubleValue] * 0.1;
-        double y = [[inputArray objectAtIndex:i + 1] doubleValue] * 0.1;
-        double z = [[inputArray objectAtIndex:i + 2] doubleValue] * 0.1;
+        double y = [[inputArray objectAtIndex:i + 512] doubleValue] * 0.1;
+        double z = [[inputArray objectAtIndex:i + 512 * 2] doubleValue] * 0.1;
         
         NSArray *anAtomCoordinate = [[NSArray alloc] initWithObjects:[NSNumber numberWithDouble:x],[NSNumber numberWithDouble:y], [NSNumber numberWithDouble:z], nil];
         
