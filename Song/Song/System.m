@@ -41,7 +41,7 @@
 #pragma mark - Constants
 double timeSlice = 0.002; //of each time stamp
 double bigSigma = 1.0; //kJ/mol
-double littleSigma = 0.03; //nm
+double littleSigma = 0.3; //nm
 double edgeLength = 4.0; //nm
 double cutoffDistance = 1.5; //nm
 double atomMass = 10.0; //amu = 1.66053892E-27 kg
@@ -284,12 +284,14 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
         double x = (24.0 * bigSigma / pow(r, 2)) * (2.0 * pow(littleSigma / r, 12) - pow(littleSigma / r, 6)) * dx;
         double y = (24.0 * bigSigma / pow(r, 2)) * (2.0 * pow(littleSigma / r, 12) - pow(littleSigma / r, 6)) * dy;
         double z = (24.0 * bigSigma / pow(r, 2)) * (2.0 * pow(littleSigma / r, 12) - pow(littleSigma / r, 6)) * dz;
-        
+
+        /*
         if (x > 100 || y > 100 || z > 100) {
             NSLog(@"force between atom[%ld] and atom[%ld] is (%f, %f, %f)", thisAtom.atomId, otherAtom.atomId, x, y, z);
             NSLog(@"distance between atom[%ld] and atom[%ld] is %f.", thisAtom.atomId, otherAtom.atomId, r);
 
         }
+         */
         
         forceArray = [[NSArray alloc] initWithObjects:[NSNumber numberWithDouble:x], [NSNumber numberWithDouble:y], [NSNumber numberWithDouble:z], nil];
     }
@@ -305,41 +307,41 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
     double dy;
     double dz;
     
-    if (fabs(otherAtom.coordinateX - anAtom.coordinateX) > (edgeLength / 2.0)) {
-        if (otherAtom.coordinateX - anAtom.coordinateX > 0) {
-            dx = otherAtom.coordinateX - anAtom.coordinateX - edgeLength;
+    if (fabs(anAtom.coordinateX - otherAtom.coordinateX) > (edgeLength / 2.0)) {
+        if (anAtom.coordinateX - otherAtom.coordinateX > 0) {
+            dx = anAtom.coordinateX - otherAtom.coordinateX - edgeLength;
         } else {
-            dx = otherAtom.coordinateX - anAtom.coordinateX + edgeLength;
+            dx = anAtom.coordinateX - otherAtom.coordinateX + edgeLength;
         }
         
         //NSLog(@"Distance x between Atom [%ld] and Atom [%ld] is altered!", anAtom.atomId, otherAtom.atomId);
     } else {
-        dx = otherAtom.coordinateX - anAtom.coordinateX;
+        dx = anAtom.coordinateX - otherAtom.coordinateX;
     }
     
     
-    if (fabs(otherAtom.coordinateY - anAtom.coordinateY) > (edgeLength / 2.0)) {
-        if (otherAtom.coordinateY - anAtom.coordinateY > 0) {
-            dy = otherAtom.coordinateY - anAtom.coordinateY - edgeLength;
+    if (fabs(anAtom.coordinateY - otherAtom.coordinateY) > (edgeLength / 2.0)) {
+        if (anAtom.coordinateY - otherAtom.coordinateY > 0) {
+            dy = anAtom.coordinateY - otherAtom.coordinateY - edgeLength;
         } else {
-            dy = otherAtom.coordinateY - anAtom.coordinateY + edgeLength;
+            dy = anAtom.coordinateY - otherAtom.coordinateY + edgeLength;
         }
         
         //NSLog(@"Distance x between Atom [%ld] and Atom [%ld] is altered!", anAtom.atomId, otherAtom.atomId);
     } else {
-        dy = otherAtom.coordinateY - anAtom.coordinateY;
+        dy = anAtom.coordinateY - otherAtom.coordinateY;
     }
     
-    if (fabs(otherAtom.coordinateZ - anAtom.coordinateZ) > (edgeLength / 2.0)) {
-        if (otherAtom.coordinateZ - anAtom.coordinateZ > 0) {
-            dz = otherAtom.coordinateZ - anAtom.coordinateZ - edgeLength;
+    if (fabs(anAtom.coordinateZ - otherAtom.coordinateZ) > (edgeLength / 2.0)) {
+        if (anAtom.coordinateZ - otherAtom.coordinateZ > 0) {
+            dz = anAtom.coordinateZ - otherAtom.coordinateZ - edgeLength;
         } else {
-            dz = otherAtom.coordinateZ - anAtom.coordinateZ + edgeLength;
+            dz = anAtom.coordinateZ - otherAtom.coordinateZ + edgeLength;
         }
         
         //NSLog(@"Distance x between Atom [%ld] and Atom [%ld] is altered!", anAtom.atomId, otherAtom.atomId);
     } else {
-        dz = otherAtom.coordinateZ - anAtom.coordinateZ;
+        dz = anAtom.coordinateZ - otherAtom.coordinateZ;
     }
 
     
