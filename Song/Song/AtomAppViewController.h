@@ -47,4 +47,6 @@
 @property (weak, nonatomic) IBOutlet NSButton *resetBtn;
 - (IBAction)resetBtnPushed:(NSButton *)sender;
 
+@property NSInteger stepsExecuted;
+
 @end

@@ -15,6 +15,7 @@
 #define zValue 2
 #define rValue 3
 
+
 @interface System()
 
 //last coordinate cache
@@ -33,6 +34,7 @@
 
 //accelaration change
 - (void)accelerationChangeOfAnAtom:(Atom *)thisAtom;
+
 
 @end
 
@@ -199,12 +201,7 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
             double forceChangeX = [[forceChange objectAtIndex:xValue] doubleValue];
             double forceChangeY = [[forceChange objectAtIndex:yValue] doubleValue];
             double forceChangeZ = [[forceChange objectAtIndex:zValue] doubleValue];
-            
-            /*
-            if (forceChangeX > 100 || forceChangeY > 100 || forceChangeZ > 100) {
-                NSLog(@"forceChange = %f, %f, %f", forceChangeX, forceChangeY, forceChangeZ);
-            }
-             */
+     
             
             
             thisAtom.forceX = thisAtom.forceX + forceChangeX;
@@ -212,6 +209,8 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
             thisAtom.forceZ = thisAtom.forceZ + forceChangeZ;
             
         }
+     
+
     }
     
     //NSLog(@"Force change of atom %ld completed!", (long)thisAtom.atomId);
@@ -247,6 +246,7 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
 {
     for (int steps = 0; steps < numberOfSteps; steps++) {
         
+
         //iterate through every atom
         for (int i = 0; i < [self.atomsArray count]; i++) {
             [self halfVelocityChangeOfAnAtom:[self.atomsArray objectAtIndex:i]];
@@ -257,9 +257,11 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
             [self accelerationChangeOfAnAtom:[self.atomsArray objectAtIndex:i]];
             [self velocityChangeOfAnAtom:[self.atomsArray objectAtIndex:i]];
         }
+        
+        NSLog(@"Proceeded %d/%ld...", steps + 1, numberOfSteps);
     };
     
-    NSLog(@"Executed %ld steps! \n", numberOfSteps);
+
 }
 
 #pragma mark - aux methods
@@ -279,6 +281,7 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
     NSArray *forceArray;
     
     if (r > cutoffDistance) { //put aside this atom if the distance is more than the cutoff
+        
         forceArray = [[NSArray alloc] initWithObjects:[NSNumber numberWithDouble:0.0], [NSNumber numberWithDouble:0.0], [NSNumber numberWithDouble:0.0], nil];
     } else {
         double x = (24.0 * bigSigma / pow(r, 2)) * (2.0 * pow(littleSigma / r, 12) - pow(littleSigma / r, 6)) * dx;
@@ -293,8 +296,12 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
         }
          */
         
+        
+        
         forceArray = [[NSArray alloc] initWithObjects:[NSNumber numberWithDouble:x], [NSNumber numberWithDouble:y], [NSNumber numberWithDouble:z], nil];
     }
+    
+    
     
     return forceArray;
     
@@ -421,6 +428,10 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
     
     return _systemTemprature;
 }
+
+
+
+
 
 
 @end

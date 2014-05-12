@@ -8,6 +8,7 @@
 
 #import "AtomAppViewController.h"
 #import "System.h"
+#import <AVFoundation/AVFoundation.h>
 
 @interface AtomAppViewController ()
 @property (strong, nonatomic) System *atomSystem;
@@ -19,6 +20,7 @@
 
 
 #pragma mark - init methods
+
 - (System *)atomSystem
 {
     if (!_atomSystem) {
@@ -32,6 +34,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Initialization code here.
+        
     }
     return self;
 }
@@ -48,7 +51,16 @@
     [_atomSystem proceedWithNumberOfSteps:[_numberOfStepsField integerValue]];
     //update steps executed
     [[self stepsExecutedField] setIntegerValue:[self.stepsExecutedField integerValue] + [_numberOfStepsField integerValue]];
+    
+    NSLog(@"Executed %ld steps! \n", [_stepsExecutedField integerValue]);
+    
     [self updateUI];
+    
+    [self writeSystemInfoToFile];
+    
+    [self runBtnPushed:(NSButton *)sender];
+    
+    
 }
 
 - (IBAction)initializeBtnPushed:(NSButton *)sender {
@@ -69,6 +81,7 @@
     [[self initializeBtn] setEnabled:NO];
     [[self runBtn] setEnabled:YES];
     [[self resetBtn] setEnabled:YES];
+    [_atomNumberBtn setEnabled:YES];
     [[self numberOfStepsField] setEnabled:YES];
     [[self numberOfStepsField] setIntegerValue:0];
     [[self stepsExecutedField] setIntegerValue:0];
@@ -178,6 +191,34 @@
     }
     
     return _resetBtn;
+}
+
+#pragma mark - write log to file
+
+//export system info to a log file
+-(void) writeSystemInfoToFile
+{
+    
+    NSString *content = [NSString stringWithFormat:@"%ld\t%lf\t%lf\t%lf\t%lf\n", [_stepsExecutedField integerValue], [_potentialEnergyField doubleValue], [_kineticEnergyField doubleValue], [_totalEnergyField doubleValue], [_totalTempratureField doubleValue]];
+    
+    //get the documents directory:
+    NSString *documentsDirectory = [NSHomeDirectory() stringByAppendingPathComponent:@"Desktop"];
+    NSString *fileName = [documentsDirectory stringByAppendingPathComponent:@"SystemLog.txt"];
+    
+    NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:fileName];
+    
+    //if SystemLog.txt is existed, append to it, otherwise create the file
+    if (fileHandle){
+        [fileHandle seekToEndOfFile];
+        [fileHandle writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
+        [fileHandle closeFile];
+    }
+    else{
+        [content writeToFile:fileName
+                  atomically:NO
+                    encoding:NSStringEncodingConversionAllowLossy
+                       error:nil];
+    }
 }
 
 @end

@@ -27,9 +27,9 @@
 @property double halfVelocityZ;
 
 //Force
-@property double forceX;
-@property double forceY;
-@property double forceZ;
+@property (nonatomic) double forceX;
+@property (nonatomic) double forceY;
+@property (nonatomic) double forceZ;
 
 //acceleration
 @property (nonatomic) double accelerationX;

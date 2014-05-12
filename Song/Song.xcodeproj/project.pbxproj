@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		942934271920654300A1FFBE /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 942934261920654300A1FFBE /* AVFoundation.framework */; };
 		9452052D1919FCEC0030F630 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9452052C1919FCEC0030F630 /* Cocoa.framework */; };
 		945205371919FCEC0030F630 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 945205351919FCEC0030F630 /* InfoPlist.strings */; };
 		945205391919FCEC0030F630 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 945205381919FCEC0030F630 /* main.m */; };
@@ -36,6 +37,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		942934261920654300A1FFBE /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		945205291919FCEC0030F630 /* Song.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Song.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9452052C1919FCEC0030F630 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		9452052F1919FCEC0030F630 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -70,6 +72,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				942934271920654300A1FFBE /* AVFoundation.framework in Frameworks */,
 				9452052D1919FCEC0030F630 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -108,6 +111,7 @@
 		9452052B1919FCEC0030F630 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				942934261920654300A1FFBE /* AVFoundation.framework */,
 				9452052C1919FCEC0030F630 /* Cocoa.framework */,
 				9452054B1919FCEC0030F630 /* XCTest.framework */,
 				9452052E1919FCEC0030F630 /* Other Frameworks */,
