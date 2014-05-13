@@ -358,10 +358,11 @@ double atomMass = 10.0; //amu = 1.66053892E-27 kg
     //double dz = (fabs(otherAtom.coordinateZ - anAtom.coordinateZ) > (edgeLength / 2)) ? (fabs(otherAtom.coordinateZ - anAtom.coordinateZ) - edgeLength) : fabs(otherAtom.coordinateZ - anAtom.coordinateZ);
     
     double r = sqrt(pow(dx, 2.0) + pow(dy, 2.0) + pow(dz, 2.0));
-    
+    /*
     if (r > 3.5) {
         NSLog(@"Distance between Atom %ld and Atom %ld is %f. \n", anAtom.atomId, otherAtom.atomId, r);
     }
+     */
     
     
     NSArray *distanceArray = [[NSArray alloc] initWithObjects:[NSNumber numberWithDouble:dx], [NSNumber numberWithDouble:dy], [NSNumber numberWithDouble:dz], [NSNumber numberWithDouble:r], nil];
